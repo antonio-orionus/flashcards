@@ -1,6 +1,6 @@
 ---
 name: generating-stem-flashcards
-description: "Generates atomic flashcards from technical/STEM source material. Supports three output modes: (1) interactive React artifacts with client-side KaTeX rendering, (2) Anki-ready TSV export with MathJax-compatible LaTeX, or (3) direct push to Anki via MCP Server (no export/import step). Use when users request flashcards, study cards, revision cards, Anki cards, quiz materials, or spaced repetition content from lecture notes, textbooks, or worksheets containing mathematical notation."
+description: "Use when users request STEM or probability flashcards, Anki cards, or revision cards from notes, textbooks, worksheets, or a topic, especially when mathematical notation, conceptual understanding, small numerical examples, or diagrams matter."
 ---
 
 # STEM Flashcard Generation
@@ -13,7 +13,7 @@ Detect the output mode from the user's request:
 **Anki mode (TSV export)**: "anki", "anki deck", "for anki", "import into anki", "anki export", "export to anki"
 **Anki mode (MCP direct)**: "send to anki", "push to anki", "add to anki directly", "anki mcp", "create in anki"
 
-If ambiguous, ask the user. Default to artifact mode. If the user says "anki" without specifying, ask whether they want a TSV file or direct push via MCP.
+Use the user's requested format and established session preferences. For Anki requests with an available, working Anki MCP, use direct push. If MCP is unavailable, explain the actual connection result and provide an Anki-ready export. Ask about format only when the choice is unresolved. Without an Anki request, default to artifact mode.
 
 ## Dependencies
 
@@ -43,11 +43,12 @@ No file export or manual import needed — cards are pushed directly into Anki.
 
 ### Step 1: Extract Topics
 Identify topic boundaries from section headings or conceptual groupings.
+Respect the requested level, language, scope, and card count. Use plain English by default; follow a different language if requested. For beginner material, small numerical examples, or geometry, read [references/BEGINNER_STEM.md](references/BEGINNER_STEM.md).
 
 ### Step 2: Generate Cards
 For each topic, create cards across three layers:
 - **L1 (Recall)**: Facts, definitions, formulas
-- **L2 (Understanding)**: Why/how, connections, intuition
+- **L2 (Understanding)**: Why/how, connections, intuition, one-step application
 - **L3 (Boundaries)**: Limitations, edge cases, when things break
 
 See `references/COGNITIVE_LAYERS.md` for layer definitions, card types, and answer constraints.
@@ -71,7 +72,7 @@ Read and follow `artifact/WORKFLOW.md`. Summary:
 
 4. Write raw LaTeX strings (NOT compiled HTML)
 5. Build artifact from `artifact/template.jsx`
-6. Save to `/mnt/user-data/outputs/[name]_flashcards.jsx`
+6. Save to the workspace output directory (or the host's provided artifact directory)
 7. Present draft
 
 ### → Anki Mode (TSV Export)
@@ -80,7 +81,7 @@ Read and follow `anki/WORKFLOW.md`. Summary:
 
 4. Wrap LaTeX in MathJax delimiters (see `anki/RENDERING.md`)
 5. Build 5-column TSV with per-card tags
-6. Save to `/mnt/user-data/outputs/[name]_anki.txt`
+6. Save to the workspace output directory (or the host's provided artifact directory)
 7. Present draft with import instructions from `anki/IMPORT_GUIDE.md`
 
 ### → Anki Mode (MCP — Direct Push)
@@ -88,9 +89,9 @@ Read and follow `anki/WORKFLOW.md`. Summary:
 Read and follow `anki/MCP_WORKFLOW.md`. Summary:
 
 4. Wrap LaTeX in MathJax delimiters (see `anki/RENDERING.md`)
-5. Ensure note type "3-Layer Card" and target deck exist (auto-created if missing)
-6. Push cards directly to Anki via `add_note`
-7. Report results — no import step needed
+5. Inspect the target deck, existing notes, and compatible note types
+6. Add only new cards; reuse existing note types and upload diagram media when needed
+7. Read back writes and report verified additions, duplicate skips, failures, and uncertain results
 
 ---
 

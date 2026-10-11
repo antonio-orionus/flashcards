@@ -2,7 +2,7 @@
 
 ## Critical Difference from Artifact Mode
 
-- **Artifact mode:** Render LaTeX to HTML using KaTeX CLI
+- **Artifact mode:** Keep LaTeX as text; the React artifact renders it client-side using KaTeX
 - **Anki mode:** Keep LaTeX as raw text, wrap in MathJax delimiters
 
 **There is no rendering command.** The LaTeX stays as text in the TSV file. Anki renders it when displaying cards using its built-in MathJax support.

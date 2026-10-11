@@ -53,7 +53,7 @@ If the `frontend-design` skill is installed, follow its guidance for React artif
 
 ## Step 6: Save and Present
 
-Save to `/mnt/user-data/outputs/[name]_flashcards.jsx`
+Save to the workspace output directory (or the host's provided artifact directory), using `[name]_flashcards.jsx`.
 
 Report:
 ```

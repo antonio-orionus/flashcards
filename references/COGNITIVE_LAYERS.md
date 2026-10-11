@@ -19,10 +19,10 @@ This framework is derived from Bloom's Taxonomy (1956, revised 2001), adapted fo
 | Layer | Cognitive Operation | Bloom's Equivalent | What It Tests |
 |-------|---------------------|-------------------|---------------|
 | **L1** | Remember / Retrieve | Remember | Facts, definitions, formulas |
-| **L2** | Explain / Connect | Understand + Analyse | Why things work, intuitions |
+| **L2** | Explain / Connect / Apply one idea | Understand + Analyse + limited Apply | Why things work, intuitions, one-step examples |
 | **L3** | Evaluate / Critique | Evaluate | Limitations, edge cases |
 
-We exclude Apply and Create because flashcards are the wrong tool for those. Application requires practice problems; creation requires projects.
+Short applications belong in L2 when they test one concept with one small calculation or inference. Longer problem solving, extended derivations, and creation belong in practice problems or projects. A layer describes the question's cognitive task, not every sentence on the back.
 
 ---
 
@@ -39,13 +39,13 @@ We exclude Apply and Create because flashcards are the wrong tool for those. App
 - "What are the properties of X?" (list-only)
 - "Who created X?" / "When was X introduced?"
 
-**Answer format**: Formula, definition, or ≤3 bullet points.
+**Answer format**: Formula, definition, or ≤3 bullet points. An optional brief explanation may clarify the same answer without adding a second recall requirement.
 
 ---
 
 ## L2: Understanding
 
-**Purpose**: Why things work, how concepts connect, intuitions, interpretations.
+**Purpose**: Why things work, how concepts connect, intuitions, interpretations, and one-step applications of a single concept.
 
 **Cognitive operation**: Explain / interpret / connect.
 
@@ -55,8 +55,9 @@ We exclude Apply and Create because flashcards are the wrong tool for those. App
 - "How does X relate to Y?"
 - "What is the geometric interpretation of X?"
 - "Why is X defined this way?"
+- "A fair die shows an even number. What is the probability it shows 6?"
 
-**Answer format**: 1-2 sentences explaining the "why" or "how".
+**Answer format**: Direct answer followed by one short reasoning step, normally 1-2 sentences.
 
 ---
 
@@ -93,8 +94,8 @@ We exclude Apply and Create because flashcards are the wrong tool for those. App
 
 | Layer | Max Length | Format |
 |-------|------------|--------|
-| L1 | Formula OR 1 sentence OR ≤3 bullets | Terse, no explanation |
-| L2 | 1-2 sentences | Explains "why" or "how" |
+| L1 | Direct answer with at most one brief explanatory sentence, OR ≤3 bullets | Retrieval is the task; context clarifies that answer |
+| L2 | 1-2 sentences | Explains "why" or "how", or shows one reasoning step |
 | L3 | 1-2 sentences | Condition → consequence |
 
 ---

@@ -1,119 +1,55 @@
 # Anki MCP Direct Push Workflow
 
-Continue here after completing the shared Steps 1–3 in `SKILL.md`.
+Continue after the shared workflow in `SKILL.md`. This guide targets the Anki MCP Server addon (`124672614`, normally `http://127.0.0.1:3141/`). Anki must be running. Use the connected tool descriptions as the authority for names, arguments, and response shapes; examples below use the current snake_case API, not AnkiConnect's camelCase API.
 
-**Prerequisite:** Anki must be running with the MCP Server addon (code `124672614`) active on `http://127.0.0.1:3141/`.
+## Inspect Before Writing
 
----
+1. Call `list_decks` and confirm the exact requested deck. Create it only if absent, using `create_deck({"deck_name": "<target>"})`.
+2. Inspect existing notes with `find_notes({"query": "deck:\"Probability — Foundations\"", "limit": 500, "offset": 0})`. Quote and escape the user's deck name using Anki search syntax. Continue pagination until all target notes are loaded; a page limit is not the collection's size.
+3. Fetch full Front/Back values using `notes_info({"notes": [101], "include_fields": ["Front", "Back"]})` in manageable batches. Do not use truncated excerpts for matching or updates.
+4. List note types with `model_names({})` and inspect compatible fields with `model_field_names({"model_name": "Basic"})`. Reuse the user's existing compatible Front/Back model. Put layer/topic metadata in tags when those fields do not exist. Do not automatically change templates or CSS shared by existing cards.
 
-## Step 4: Prepare LaTeX (Do NOT Render)
+If a custom `3-Layer Card` model is requested, use its existing fields after checking them. If it is missing, create it with `model_name`, `in_order_fields: ["Front", "Back", "Layer", "Topic"]`, and `card_templates: [{"Name": "Card 1", "Front": "<front template>", "Back": "<back template>"}]`, using [NOTE_TYPE_TEMPLATE.md](NOTE_TYPE_TEMPLATE.md) for HTML/CSS. Do not create a custom model merely to hold layer metadata.
 
-**Critical:** Do NOT use KaTeX CLI. Keep LaTeX as raw text.
+## Plan New Cards and Duplicates
 
-For each card with LaTeX:
-1. Identify inline vs display math
-2. Wrap in MathJax delimiters:
-   - Inline: `\(LATEX\)`
-   - Display: `\[LATEX\]`
+Compare every proposed front against both existing target-deck notes and the current batch. Ignore presentation-only differences such as bold HTML, equivalent entities, and repeated whitespace. Retain mathematical symbols, meaningful punctuation/case, and image references when comparing. Also check for paraphrases testing the same idea in the same example; retain variants that deliberately test a different cognitive task.
 
-See `anki/RENDERING.md` for delimiter rules and examples. Anki renders the math via its built-in MathJax — the delimiters are identical regardless of whether cards arrive via TSV import or MCP push.
+- Existing equivalent card: skip it and count it as a duplicate. Adding cards does not imply rewriting an existing answer.
+- Explicit correction request: identify the exact existing note, read its full fields, and use `update_note_fields` or `update_notes` under the current schema; preserve unrelated fields and review history.
+- New question: prepare an addition using the inspected model.
 
----
+## Prepare Math and Media
 
-## Step 5: Ensure Note Type Exists
+Keep LaTeX as text wrapped in `\(...\)` or `\[...\]`; Anki renders it using MathJax. See [RENDERING.md](RENDERING.md).
 
-1. Call `model_names` to list existing note types
-2. If **"3-Layer Card"** is missing, create it:
+For a generated diagram, inspect the labels, geometry, and answer first. Use a descriptive filename with a content hash to avoid overwriting unrelated media. Upload with `store_media_file({"filename": "probability_area_<hash>.svg", "path": "<absolute local path>"})`. Reference the returned filename, for example `<img src="<returned filename>" alt="B has area 6; its overlap with A has area 2">`. Required diagram information belongs on the front; the answer belongs on the back. Verify that every referenced file was stored successfully.
 
-Call `create_model` with:
-- **modelName:** `3-Layer Card`
-- **fields:** `Front`, `Back`, `Layer`, `Topic`
-- **cardTemplates:** front/back HTML from `anki/NOTE_TYPE_TEMPLATE.md`
-- **css:** styling from `anki/NOTE_TYPE_TEMPLATE.md`
+## Add, Reconcile, and Verify
 
-3. If the model already exists, call `model_field_names` with modelName `3-Layer Card` and verify it returns `[Front, Back, Layer, Topic]`
+For each new Basic note, use the live schema, for example:
 
-Optionally call `update_model_styling` to refresh the CSS if `anki/NOTE_TYPE_TEMPLATE.md` has been updated.
-
----
-
-## Step 6: Ensure Deck Exists
-
-1. Call `list_decks` to list existing decks
-2. If the target deck is missing, call `create_deck` with the desired deck name
-3. If the user didn't specify a deck name, ask them — or default to `"STEM"`
-
----
-
-## Step 7: Push Cards to Anki
-
-For each generated card, call `add_note` with:
-
-```
-deckName: "<target deck>"
-modelName: "3-Layer Card"
-fields:
-  Front: "<question text>"
-  Back: "<answer with \(...\) or \[...\] MathJax delimiters>"
-  Layer: "L1 · Recall"            (or "L2 · Understanding" or "L3 · Boundaries")
-  Topic: "<topic name>"
-tags: ["STEM", "L1-Recall", "<TopicName>"]
+```json
+{
+  "deck_name": "Probability — Foundations",
+  "model_name": "Basic",
+  "fields": {
+    "Front": "A fair die shows an even number. What is the probability it shows 6?",
+    "Back": "1/3. The possible even results are 2, 4, and 6; one is 6."
+  },
+  "tags": ["STEM", "L2-Understanding", "ConditionalProbability"],
+  "allow_duplicate": false
+}
 ```
 
-### Tag Format
+Send only fields that exist in the chosen model. Inspect each result for success/errors and record returned note IDs; batch operations may partially succeed. Keep duplicate prevention enabled, and check additions within the current batch as well as against the initial inventory.
 
-Same as TSV mode (space-separated in the tags array):
-- `STEM` — all cards
-- Layer tag: `L1-Recall`, `L2-Understanding`, or `L3-Boundaries`
-- Topic tag: sanitised topic name, e.g. `Statistics`, `LinearAlgebra`
+A timeout after sending is an **uncertain write**, not proof of failure. Before retrying, query the target deck again and inspect candidates' full fields. If the intended card exists, recover its note ID and verify it. Retry only after a successful reconciliation shows it absent. If the connection prevents reconciliation, stop further writes, preserve the uncertain operation, and report it; do not blindly resend or suggest importing the same batch.
 
-### Error Handling
+Read back created/updated notes with `notes_info` and compare the requested fields and media references. Separate verified note counts from card counts, since some models generate multiple cards per note. Report actual verified additions, duplicate skips, updates, confirmed failures, and unresolved writes. A deck's total count alone does not verify the batch.
 
-If `add_note` fails for a card:
-- Log the failure with the card's Front text
-- Continue with remaining cards
-- Report failures at the end
+## Existing Connection and Iteration
 
----
+Use the established integration rather than installing or reconfiguring another server. If tools are missing or calls fail, report that observed condition and provide a TSV/media alternative when direct creation cannot be completed. Sync is separate: when the user uses AnkiWeb across devices, offer sync at the start/end; call it only when authorized, never implicitly.
 
-## Step 8: Report Results
-
-```
-Pushed 45 cards directly to Anki (deck: "STEM"):
-- L1 (Recall): 18 cards
-- L2 (Understanding): 15 cards
-- L3 (Boundaries): 12 cards
-
-No import needed — cards are already in Anki.
-```
-
-If any cards failed, append:
-```
-⚠ 2 cards failed to push (see details above). You can retry or switch to TSV export mode.
-```
-
----
-
-## Iterative Refinement
-
-On user feedback (e.g., "Card 12's formula is wrong"):
-1. Call `find_notes` with a query matching the card (e.g., `"deck:STEM Front:*formula for variance*"`)
-2. Call `notes_info` to get the note ID and current field values
-3. Call `update_note_fields` with the corrected fields
-
-On "add more cards about X":
-1. Generate new cards (repeat shared Steps 2–3)
-2. Wrap their LaTeX in MathJax delimiters
-3. Call `add_note` for each new card
-
-On "remove cards about X":
-1. Call `find_notes` with `"tag:TopicName"` or a field-based query
-2. Confirm with the user which cards to delete
-3. Call `delete_notes` with the note IDs
-
-On "show me the cards in Anki":
-1. Call `gui_browse` with `"deck:DeckName"` to open Anki's browser
-
-On "update the card styling":
-1. Call `update_model_styling` with the new CSS for model `3-Layer Card`
-
+For requested additions, repeat inspection and duplicate planning. For corrections, update the identified note rather than adding a replacement. For removals, identify the intended notes and follow the user's deletion authorization. Open the target deck in Anki only when useful or requested, using the available GUI tools.

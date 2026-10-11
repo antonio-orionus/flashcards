@@ -25,7 +25,7 @@ For each card, verify:
 
 ### Red Flags
 
-**"And" in the question** almost always indicates a non-atomic card:
+**"And" joining separate questions** indicates a non-atomic card. An event expression such as "A and B" is not itself a compound question:
 
 | ❌ Non-atomic | ✅ Atomic (split) |
 |---------------|-------------------|
@@ -37,8 +37,10 @@ For each card, verify:
 
 | ❌ Mixed layers | ✅ Separate cards |
 |-----------------|-------------------|
-| Definition + explanation in one answer | L1 card for definition, L2 card for explanation |
-| Problem + solution in one card | L3 card for problem, L1 card for solution |
+| Definition + independently tested properties | Separate the definition and property questions |
+| Calculation + an independent limitation question | Separate application and boundary cards |
+
+A direct answer followed by one brief explanation of that same answer remains one idea. Classify the layer by what the front asks the learner to do.
 
 ---
 
@@ -51,10 +53,14 @@ Some content should NOT become a flashcard. Attempting to card it produces low-q
 | Content Type | Reason | Alternative |
 |--------------|--------|-------------|
 | Multi-step processes (>3 steps) | Too much sequential memory load | Leave as reference material |
-| Worked examples | Require active problem-solving, not recall | Practice problems |
+| Extended worked examples requiring several concepts or calculations | Too much reasoning for one review | Practice problems |
 | Extended derivations/proofs | Cannot be atomised without losing coherence | Proof sketch notes |
 | Lists with >3 tightly-coupled items | Cognitive overload | Split or leave as notes |
 | Compound questions (X and Y) | Violates atomicity | Split into separate cards |
+
+### Small Numerical Examples
+
+Create an L2 card when one concept can be checked with one small calculation or inference. Put the sampling assumptions and necessary numbers on the front; give the result first and one short reason on the back. See [BEGINNER_STEM.md](BEGINNER_STEM.md) for probability examples and diagrams.
 
 ### Exception for Lists
 
@@ -68,9 +74,9 @@ A card CAN ask for a list if listing is the ONLY thing asked:
 
 ### When in Doubt
 
-Ask: "Can a student answer this with a single retrieval operation, or does it require chaining multiple concepts?"
+Ask: "Does this test one retrieval, interpretation, or small application, or does it require chaining multiple concepts?"
 
-- Single retrieval → make the card
+- One retrieval, interpretation, or small application → make the card
 - Multiple retrievals → split or refuse
 
 ---
@@ -84,7 +90,9 @@ Before finalising each card, verify all items:
 □ Answer matches the layer's cognitive purpose
 □ Answer is ≤3 bullets OR ≤2 sentences
 □ Card cannot be meaningfully split
-□ Card doesn't combine definition + explanation + limitation
+□ Card doesn't ask for multiple independently gradable answers
+□ Numerical examples state their assumptions and have verified arithmetic
+□ Diagram labels and areas agree with the question and answer
 □ Layer label matches what's actually being tested
 ```
 
@@ -93,7 +101,7 @@ Before finalising each card, verify all items:
 | Symptom | Problem | Fix |
 |---------|---------|-----|
 | Answer has 5+ bullets | Too much in one card | Split into multiple cards |
-| Question has "and" | Compound question | Split at the "and" |
-| L1 card explains "why" | Wrong layer | Re-label as L2 or remove explanation |
+| Question asks X and separately asks Y | Compound question | Split the independent asks |
+| A "why" question is labeled L1 | Wrong layer | Re-label as L2 |
 | L3 card includes definition | Mixed layers | Extract definition to separate L1 card |
 | Answer could fill a paragraph | Not atomic | Identify the core claim and cut the rest |

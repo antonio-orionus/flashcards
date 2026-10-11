@@ -83,7 +83,7 @@ Before saving, verify:
 
 ## Step 7: Save and Present
 
-Save to `/mnt/user-data/outputs/[name]_anki.txt`
+Save to the workspace output directory (or the host's provided artifact directory), using `[name]_anki.txt`.
 
 Report:
 ```
@@ -92,6 +92,8 @@ Generated 45 cards for Anki import:
 - L2 (Understanding): 15 cards
 - L3 (Boundaries): 12 cards
 ```
+
+For diagram cards, include the referenced image files and explain how to copy them into Anki's collection.media folder before import. Use relative `<img src="filename.svg" alt="meaningful description">` references.
 
 Then include the import instructions from `anki/IMPORT_GUIDE.md`.
 

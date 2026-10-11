@@ -1,6 +1,10 @@
 # Generating STEM Flashcards
 
-A Claude skill for generating atomic, cognitively-principled flashcards from technical source material.
+An agent skill for generating atomic flashcards from technical source material.
+
+This personal fork of [jalliet/flashcards](https://github.com/jalliet/flashcards) keeps the three-layer structure and adds beginner-friendly English, one-step numerical examples, diagram guidance, and duplicate-aware creation through the existing Anki MCP. Longer worked problems remain separate practice.
+
+See [the behavior checks](tests/SCENARIOS.md) for example creation, duplicate handling, and uncertain-write scenarios used to validate these adaptations.
 
 ## What It Does
 
@@ -12,7 +16,7 @@ Upload lecture notes, textbooks, or technical documentation. Get flashcards orga
 | **L2: Understanding** | Why/how, intuitions | "Why is the Jacobian useful for coordinate transforms?" |
 | **L3: Boundaries** | Limitations, edge cases | "When does the Jacobian become singular?" |
 
-The skill enforces atomicity (one concept per card), refuses to generate cards for inappropriate content (proofs, worked examples), and handles mathematical notation (KaTeX for Claude Artifacts, MathJax for Anki).
+The skill enforces atomicity (one concept per card), keeps extended proofs and worked problems out of individual cards while allowing small numerical concept checks, and handles mathematical notation (KaTeX for Claude Artifacts, MathJax for Anki).
 
 ---
 
@@ -26,7 +30,7 @@ This skill encodes learning science directly into generation:
 - **Cognitive Load Theory** → Atomicity Rules
 - **Minimum Information Principle** → Refusal Policy
 
-See [THEORY.md](THEORY.md) for the full scientific foundation with citations.
+See [Theory.md](Theory.md) for the full scientific foundation with citations.
 
 ---
 
@@ -50,7 +54,15 @@ See [THEORY.md](THEORY.md) for the full scientific foundation with citations.
 
 ## Installation
 
-### Quick Install (recommended)
+### Install this fork as an agent skill
+
+```bash
+npx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+```
+
+Choose your agent in the installer. The upstream release instructions below install the original version rather than these adaptations.
+
+### Install the upstream Claude release
 
 1. Download `flashcards-vX.X.X.zip` from the [latest release](https://github.com/jalliet/flashcards/releases/latest)
 2. Upload to Claude.ai: **Settings > Capabilities > Skills > Upload Skill**
@@ -295,7 +307,7 @@ Restart Claude Desktop. You should see **anki: running** in the MCP server indic
 
 #### 3. What the skill auto-configures
 
-The skill will automatically create the **"3-Layer Card"** note type and target deck if they don't exist. No manual Anki configuration needed beyond installing the addon and connecting Claude Desktop.
+The skill checks the target deck and existing notes first. It reuses a compatible existing Front/Back note type (such as Basic), records layer/topic metadata in tags, and skips equivalent cards. A custom **"3-Layer Card"** model is optional. New notes are read back before results are reported; uncertain writes are reconciled before retrying. See [the MCP workflow](anki/MCP_WORKFLOW.md).
 
 <details>
 <summary><strong>Troubleshooting</strong></summary>
@@ -397,12 +409,13 @@ Then restart Claude Desktop. The package will be re-downloaded and built against
 ```
 flashcards/
 ├── README.md                   # This file
-├── THEORY.md                   # Scientific foundations (Bloom, CLT, etc.)
+├── Theory.md                   # Scientific foundations (Bloom, CLT, etc.)
 ├── SKILL.md                    # Main skill instructions
 ├── references/
 │   ├── COGNITIVE_LAYERS.md     # L1/L2/L3 definitions
 │   ├── ATOMICITY.md            # Quality rules, refusal policy
-│   └── LATEX_SYNTAX.md         # KaTeX reference
+│   ├── LATEX_SYNTAX.md         # KaTeX reference
+│   └── BEGINNER_STEM.md        # Small examples, notation, diagrams
 ├── anki/
 │   ├── WORKFLOW.md             # TSV export build steps
 │   ├── MCP_WORKFLOW.md         # MCP direct push steps
@@ -417,7 +430,7 @@ flashcards/
     └── flashcard_template.jsx
 ```
 
-**Note**: Only the skill files inside `flashcards/` (SKILL.md, references/, anki/, artifact/) are packaged in releases. README.md and THEORY.md are GitHub documentation only. Releases are built automatically via GitHub Actions when a version tag is pushed.
+**Note**: Only the skill files inside `flashcards/` (SKILL.md, references/, anki/, artifact/) are packaged in releases. README.md and Theory.md are GitHub documentation only. Releases are built automatically via GitHub Actions when a version tag is pushed.
 
 ---
 

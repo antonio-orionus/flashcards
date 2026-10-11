@@ -35,10 +35,10 @@ Bloom's taxonomy classifies cognitive processes into hierarchical levels: Rememb
 Our three layers compress this into what's actually useful for flashcard-based learning:
 
 - **L1 (Recall)** = Remember
-- **L2 (Understanding)** = Understand + Analyse
+- **L2 (Understanding)** = Understand + Analyse + limited Apply
 - **L3 (Boundaries)** = Evaluate
 
-We deliberately exclude Apply and Create because flashcards are the wrong tool for those. Application requires practice problems; creation requires projects.
+This fork includes limited Apply in L2: one small calculation or inference testing a single concept. Longer applications belong in practice problems, and creation belongs in projects. This is a practical design choice, not evidence that flashcards replace problem-solving practice.
 
 > Bloom, B. S. (1956). *Taxonomy of Educational Objectives*. Longmans, Green.
 >
@@ -80,7 +80,7 @@ Piotr Wozniak, creator of SuperMemo, articulated the minimum information princip
 
 > "Simple items are easier to remember... If you decompose complex knowledge into simple items, you will have less to remember."
 
-Our refusal policy operationalises this. Some content (multi-step proofs, worked examples, lists with >3 items) cannot be atomised without losing coherence. The correct response is to not create a flashcard, not to create a bad one.
+Our refusal policy operationalises this. Some content (multi-step proofs, extended worked examples, lists with >3 items) cannot be atomised without losing coherence. The correct response is to not create a flashcard, not to create a bad one.
 
 > Wozniak, P. (1999). Effective learning: Twenty rules of formulating knowledge. *SuperMemo*.
 > https://www.supermemo.com/en/blog/twenty-rules-of-formulating-knowledge
