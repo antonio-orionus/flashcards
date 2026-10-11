@@ -20,12 +20,29 @@ The upstream project was originally documented for Claude, so its [public intera
 
 Install this fork using the cross-agent installer. Choose one command for the package manager you use:
 
-| Package manager | Install command |
-|-----------------|-----------------|
-| npm | `npx skills add antonio-orionus/flashcards --skill generating-stem-flashcards` |
-| [Bun](https://bun.com/docs/pm/bunx) | `bunx skills add antonio-orionus/flashcards --skill generating-stem-flashcards` |
-| [pnpm](https://pnpm.io/cli/dlx) | `pnpm dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards` |
-| [Yarn (modern)](https://yarnpkg.com/cli/dlx) | `yarn dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards` |
+**npm**
+
+```bash
+npx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+```
+
+**[Bun](https://bun.com/docs/pm/bunx)**
+
+```bash
+bunx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+```
+
+**[pnpm](https://pnpm.io/cli/dlx)**
+
+```bash
+pnpm dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+```
+
+**[Yarn (modern)](https://yarnpkg.com/cli/dlx)**
+
+```bash
+yarn dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+```
 
 Choose your agent in the installer. See the [CLI documentation](https://github.com/vercel-labs/skills#options) for selecting agents and choosing project or global installation.
 
