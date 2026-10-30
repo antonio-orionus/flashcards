@@ -1,6 +1,6 @@
-# Generating STEM Flashcards
+# Anki
 
-An agent skill for creating concise STEM and probability flashcards from notes, textbooks, worksheets, or a topic. This fork of [jalliet/flashcards](https://github.com/jalliet/flashcards) preserves its three-layer approach and adds beginner-friendly English, one-step numerical examples, labeled diagrams, and duplicate-aware Anki creation.
+An agent skill for Anki: writing flashcards from notes, textbooks, worksheets, or a topic, adding them to Anki or exporting them for import, and managing a collection through the Anki MCP Server addon. STEM and probability cards get a dedicated method. This fork of [jalliet/flashcards](https://github.com/jalliet/flashcards) preserves its three-layer approach and adds beginner-friendly English, one-step numerical examples, labeled diagrams, duplicate-aware Anki creation, general (non-STEM) cards, and collection management: search, edit, tags, decks, review sessions, and sync. The skill was named `generating-stem-flashcards` before it took on general Anki work.
 
 ## Agent Compatibility
 
@@ -23,25 +23,25 @@ Install this fork using the cross-agent installer. Choose one command for the pa
 **npm**
 
 ```bash
-npx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+npx skills add antonio-orionus/flashcards --skill anki
 ```
 
 **[Bun](https://bun.com/docs/pm/bunx)**
 
 ```bash
-bunx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+bunx skills add antonio-orionus/flashcards --skill anki
 ```
 
 **[pnpm](https://pnpm.io/cli/dlx)**
 
 ```bash
-pnpm dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+pnpm dlx skills add antonio-orionus/flashcards --skill anki
 ```
 
 **[Yarn (modern)](https://yarnpkg.com/cli/dlx)**
 
 ```bash
-yarn dlx skills add antonio-orionus/flashcards --skill generating-stem-flashcards
+yarn dlx skills add antonio-orionus/flashcards --skill anki
 ```
 
 Choose your agent in the installer. See the [CLI documentation](https://github.com/vercel-labs/skills#options) for selecting agents and choosing project or global installation.
@@ -72,6 +72,10 @@ Provide the source material or specify the topic, level, language, and desired o
 
 > Correct the conditional-probability answer on the existing card.
 
+> Make 20 Spanish vocabulary cards from this list and add them to Spanish::Verbs.
+
+> Suspend every card tagged `leech` in my Probability deck, then quiz me on what's due.
+
 Keep course material together in whatever workspace or project your agent supports. PDF or document-reading tools can help with source extraction, but are not required for pasted text or topic-based requests.
 
 ## Anki Connection and Outputs
@@ -83,6 +87,10 @@ Use the [Anki MCP Server addon](https://github.com/ankimcp/anki-mcp-server-addon
 The skill inspects the target deck and existing notes, reuses a compatible Front/Back note type, and stores layer/topic metadata in tags. A custom `3-Layer Card` note type is optional. It skips equivalent cards, reads back new notes, and reconciles uncertain writes before retrying. See [the MCP workflow](anki/MCP_WORKFLOW.md) for the current tool arguments and verification steps.
 
 If the connection fails, check that Anki is running, the addon is enabled, and the agent exposes its tools. Consult your client's current MCP documentation and the [addon documentation](https://github.com/ankimcp/anki-mcp-server-addon) for transport configuration; a bridge is only needed when the client requires one. Skill installation alone does not establish the connection.
+
+### Managing a Collection
+
+With the same MCP connection, the skill searches, edits, tags, moves, suspends and deletes notes and cards, creates decks, runs review sessions, and syncs with AnkiWeb when asked. It previews destructive changes before making them. See [the management guide](anki/MANAGE.md).
 
 ### TSV Export
 

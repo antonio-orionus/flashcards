@@ -4,7 +4,7 @@ Continue after the shared workflow in `SKILL.md`. This guide targets the Anki MC
 
 ## Inspect Before Writing
 
-1. Call `list_decks` and confirm the exact requested deck. Create it only if absent, using `create_deck({"deck_name": "<target>"})`.
+1. Call `list_decks` and confirm the exact requested deck. If the user named none, propose one (an existing deck that fits, or `Subject::Topic`) and ask before writing. Create it only if absent, using `create_deck({"deck_name": "<target>"})`.
 2. Inspect existing notes with `find_notes({"query": "deck:\"Probability — Foundations\"", "limit": 500, "offset": 0})`. Quote and escape the user's deck name using Anki search syntax. Continue pagination until all target notes are loaded; a page limit is not the collection's size.
 3. Fetch full Front/Back values using `notes_info({"notes": [101], "include_fields": ["Front", "Back"]})` in manageable batches. Do not use truncated excerpts for matching or updates.
 4. List note types with `model_names({})` and inspect compatible fields with `model_field_names({"model_name": "Basic"})`. Reuse the user's existing compatible Front/Back model. Put layer/topic metadata in tags when those fields do not exist. Do not automatically change templates or CSS shared by existing cards.
@@ -27,7 +27,7 @@ For a generated diagram, inspect the labels, geometry, and answer first. Use a d
 
 ## Add, Reconcile, and Verify
 
-For each new Basic note, use the live schema, for example:
+Add with `add_notes` for a batch (one deck and one note type per call; each entry is `{"fields": {...}, "tags": [...]}`) or `add_note` for a single note. A single Basic note under the live schema, for example:
 
 ```json
 {
