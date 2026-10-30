@@ -23,3 +23,9 @@ Check that the result remains uncertain until a fresh lookup reconciles it. Reco
 ## Recorded Comparison
 
 The unmodified upstream simulation exposed unsupported one-step applications, mandatory custom-model creation, addition of the formatted duplicate, and failure reporting without timeout reconciliation. A fresh simulation of this fork produced six suitable cards with an SVG media plan, skipped example note 101, reused Basic, used current API arguments, and reconciled uncertain writes before retrying. These are simulated behavior checks; they do not establish successful live additions or certify every output mode.
+
+## General Cards and Management
+
+Request ten Spanish vocabulary cards in a `Spanish::Verbs::Irregular` deck, then ask to retag every note tagged `verbs` as `verb` and delete the notes of a deck the user names.
+
+Check that vocabulary skips the L1–L3 layers and uses an inspected Basic or reversed model with topic tags. The three-level deck name is flagged before `create_deck` (the addon allows two levels) and a two-level name is proposed. Retagging resolves the affected notes, checks for child tags of `verbs`, and uses `tag_management` `replace_tags` with `old_tag`/`new_tag` strings (or `batch_tags` when child tags must stay). Deletion resolves the notes, shows the count and examples, runs `delete_notes` with `dry_run: true, confirmDeletion: false`, and sends `confirmDeletion: true` only after the user agrees, then says the emptied deck remains.
