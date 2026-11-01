@@ -1,6 +1,6 @@
 # Managing an Anki Collection
 
-For requests that work on existing decks, notes and cards rather than writing new ones. This targets the Anki MCP Server addon (`124672614`, normally `http://127.0.0.1:3141/`); Anki must be running. The connected tool descriptions are the authority for arguments and response shapes. The collection is the user's real data: create, edit or delete only what they asked for.
+For requests that work on existing decks, notes and cards rather than writing new ones. This targets the Anki MCP Server addon (`124672614`, normally `http://127.0.0.1:3141/`); Anki must be running. Call the tools natively or through the bundled client (`SKILL.md`, Dependencies); their descriptions are the authority for arguments and response shapes. The collection is the user's real data: create, edit or delete only what they asked for.
 
 ## Tool Map
 
@@ -13,9 +13,10 @@ For requests that work on existing decks, notes and cards rather than writing ne
 | Edit one note | `update_note_fields` | `fields` replaces whole values; `field_name` + `old_str` + `new_str` patches one snippet |
 | Edit many notes | `update_notes` | Partial field updates; `dry_run: true` first for large changes |
 | Delete notes | `delete_notes` | `dry_run: true` first, then `confirmDeletion: true`; removes every card of the note |
-| Tags | `tag_management` | Actions `add_tags`, `remove_tags`, `replace_tags`, `get_tags`, `clear_unused_tags`, `batch_tags` |
-| Cards | `card_management` | Actions `change_deck`, `suspend`, `unsuspend`, `bury`, `unbury`, `set_flag`, `set_due_date`, `forget_cards`, `reposition` |
-| Cram decks | `filtered_deck` | Max 2 search terms; cards return home with scheduling intact on `empty`/`delete` |
+| Tags | `tag_add`, `tag_remove`, `tag_replace`, `tag_batch`, `tag_list`, `tag_clear_unused` | Take `note_ids`; `tag_list` takes an optional `deck` |
+| Cards | `card_change_deck`, `card_suspend`, `card_unsuspend`, `card_bury`, `card_set_flag`, `card_set_due_date`, `card_forget`, `card_reposition` | Take `card_ids` |
+| Unbury | `card_unbury` | Takes a `deck_name`, not card IDs |
+| Cram decks | `filtered_deck_upsert`, `filtered_deck_rebuild`, `filtered_deck_empty`, `filtered_deck_delete`, `filtered_deck_get_info` | Max 2 search terms; cards return home with scheduling intact on empty/delete |
 | Note types | `model_names`, `model_field_names`, `model_templates`, `model_styling` | Read before writing notes of a custom type |
 | Scheduling stats | `cards_stats`, `get_card_memory_state`, `get_fsrs_params` | Read-only |
 | Media | `get_media_files_names`, `store_media_file`, `delete_media_file` | Deleted media goes to Anki's trash |
@@ -35,18 +36,18 @@ note:Basic                         # note type
 "exact phrase"                     # phrase anywhere in the note
 ```
 
-`find_notes` returns note IDs. `card_management` takes card IDs: run `find_notes` for the query, then `cards_stats` on the deck (it returns each card's `cid` and `nid`, up to 1000 per page) and keep the cards whose `nid` matched. Don't use `gui_browse` for this; it opens Anki's browser window. Pass `noteIds`, not `noteLabels`, to tools that want note IDs.
+`find_notes` returns note IDs. The `card_*` tools take card IDs: run `find_notes` for the query, then `cards_stats` on the deck (it returns each card's `cid` and `nid`, up to 1000 per page) and keep the cards whose `nid` matched. Don't use `gui_browse` for this; it opens Anki's browser window. Pass `noteIds`, not `noteLabels`, to tools that want note IDs.
 
 `deck:"X"` includes subdecks and `tag:x` includes child tags `x::*`. Before changing or deleting by deck or tag, check for subdecks or child tags and exclude them (`-deck:"X::*"`) unless the user meant them too.
 
 ## Argument Traps
 
-- `add_note`/`add_notes` take `tags` as a JSON array; `tag_management` takes tags as one space-separated string.
+- `add_note`/`add_notes` take `tags` as a JSON array; `tag_add`, `tag_remove` and each `tag_batch` operation take tags as one space-separated string.
 - `add_notes` shares one deck and one note type per call; split mixed batches.
-- `create_deck` rejects a third level (`A::B::C`). Propose `Subject::Topic` plus a tag for the third level. An existing deeper deck can still receive notes. `card_management` `change_deck` creates missing decks; don't use it to get around the limit.
-- `replace_tags` takes single `old_tag`/`new_tag` strings and also strips the old tag's children (`old::*`). When child tags exist and must stay, use `batch_tags` add/remove instead.
+- `create_deck` rejects a third level (`A::B::C`). Propose `Subject::Topic` plus a tag for the third level. An existing deeper deck can still receive notes. `card_change_deck` creates missing decks; don't use it to get around the limit.
+- `tag_replace` takes single `old_tag`/`new_tag` strings and also strips the old tag's children (`old::*`). When child tags exist and must stay, use `tag_batch` add/remove operations instead.
 - `update_note_fields` can fail to save while the note is open in Anki's browser; read back after editing.
-- `model_fields` add and reposition change the schema and force a one-way full sync that overwrites AnkiWeb and other devices. Warn and get confirmation first; rename does not.
+- `model_field_add` and `model_field_reposition` change the schema and force a one-way full sync that overwrites AnkiWeb and other devices. Warn and get confirmation first; `model_field_rename` does not.
 - Changing templates or CSS with `update_model_templates`/`update_model_styling` affects every card of that type. Do it only on request.
 
 ## Destructive Changes

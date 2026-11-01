@@ -21,7 +21,7 @@ Detect the output mode from the user's request:
 **Anki mode (TSV export)**: "anki export", "import into anki", "anki file", "tsv"
 **Artifact mode**: "interactive", "artifact", "study cards" without mentioning Anki
 
-Use the user's requested format and established session preferences. For Anki requests with an available, working Anki MCP, use direct push. If MCP is unavailable, explain the actual connection result and provide an Anki-ready export. Ask about format only when the choice is unresolved.
+Use the user's requested format and established session preferences. For Anki requests that can reach the Anki MCP server, natively or through the bundled client (see Dependencies), use direct push. If neither reaches it, explain the actual connection result and provide an Anki-ready export. Ask about format only when the choice is unresolved.
 
 ## Dependencies
 
@@ -32,7 +32,20 @@ Requires:
   Install: Tools → Add-ons → Get Add-ons → enter `124672614` → restart Anki
 - Server auto-starts on `http://127.0.0.1:3141/` when Anki opens
 
-The connected tool descriptions are the authority for names and arguments. This skill targets that addon's snake_case tools (`find_notes`, `add_notes`, `tag_management`), not AnkiConnect's camelCase API or other servers' `anki_*` tools.
+Reach the addon's tools in one of two ways:
+- **Native tools**: when the agent already has the server connected as MCP tools, call them directly.
+- **Bundled client**: otherwise, run `scripts/anki_mcp.py` from this skill's folder with `python3`. It calls the same server over HTTP, so the agent needs no MCP registration and loads nothing about Anki until this skill runs.
+
+```bash
+python3 <skill folder>/scripts/anki_mcp.py tools               # server instructions, one line per tool
+python3 <skill folder>/scripts/anki_mcp.py schema add_notes    # one tool's arguments
+python3 <skill folder>/scripts/anki_mcp.py call find_notes '{"query": "deck:Spanish", "limit": 50}'
+python3 <skill folder>/scripts/anki_mcp.py call add_notes @/tmp/notes.json
+```
+
+With the client, run `tools` once per session (it prints the server's own instructions) and read a tool's `schema` before its first call. Pass card text from a temporary JSON file (`@path`) or stdin (`-`) rather than inline, to avoid shell quoting. Exit codes: 0 success; 1 the tool or server reported an error; 2 the server is unreachable (Anki closed or the addon off); 3 the request was sent but no answer came, an uncertain write; 4 bad usage. `ANKI_MCP_URL` overrides the address and `ANKI_MCP_API_KEY` supplies the addon's API key when one is set.
+
+The tool descriptions (native, or from `schema`) are the authority for names and arguments. This skill targets that addon's snake_case tools (`find_notes`, `add_notes`, `tag_add`), not AnkiConnect's camelCase API or other servers' `anki_*` tools. The guides name a tool and its JSON arguments; with the client, pass the same JSON to `call`.
 
 ### Anki mode (TSV export)
 No dependencies required (uses raw LaTeX with MathJax delimiters).

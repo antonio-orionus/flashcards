@@ -11,7 +11,7 @@ Installation and runtime capabilities are separate: an agent still needs access 
 | Output | Required capabilities |
 |--------|-----------------------|
 | Anki-ready TSV | Write a text file; include media files for diagram cards |
-| Direct Anki creation | Access to the configured Anki MCP Server addon, with Anki running |
+| Direct Anki creation | The Anki MCP Server addon with Anki running, reached through the agent's MCP tools or the bundled `scripts/anki_mcp.py` (needs `python3` and a shell) |
 | Interactive React artifact | A host or application capable of running the supplied React/KaTeX component; this is an optional output with host-specific requirements |
 
 The upstream project was originally documented for Claude, so its [public interactive example](https://claude.ai/public/artifacts/6c97797f-3b9d-4245-a5b5-5a4d5da02fcf) uses Claude's artifact viewer. The Anki and TSV workflows do not depend on that viewer. The supplied React template supports text and math; diagrams require an image-capable output or an adapted template.
@@ -82,15 +82,18 @@ Keep course material together in whatever workspace or project your agent suppor
 
 ### Direct Creation Through MCP
 
-Use the [Anki MCP Server addon](https://github.com/ankimcp/anki-mcp-server-addon) with the MCP client configuration supported by your agent. The addon normally listens at `http://127.0.0.1:3141/` while Anki is running. Reuse an established connection rather than setting up another integration.
+Install the [Anki MCP Server addon](https://github.com/ankimcp/anki-mcp-server-addon). It listens at `http://127.0.0.1:3141/` while Anki is running. The skill reaches it in one of two ways:
+
+- **Native MCP tools**, when your agent has the server registered as an MCP server. Reuse that connection rather than setting up another.
+- **The bundled client** `scripts/anki_mcp.py` (needs `python3`), which calls the same server over HTTP. Nothing has to be registered, so the server's tool list stays out of every session's context until the skill runs.
 
 The skill inspects the target deck and existing notes, reuses a compatible Front/Back note type, and stores layer/topic metadata in tags. A custom `3-Layer Card` note type is optional. It skips equivalent cards, reads back new notes, and reconciles uncertain writes before retrying. See [the MCP workflow](anki/MCP_WORKFLOW.md) for the current tool arguments and verification steps.
 
-If the connection fails, check that Anki is running, the addon is enabled, and the agent exposes its tools. Consult your client's current MCP documentation and the [addon documentation](https://github.com/ankimcp/anki-mcp-server-addon) for transport configuration; a bridge is only needed when the client requires one. Skill installation alone does not establish the connection.
+If the connection fails, check that Anki is running and the addon is enabled; `python3 scripts/anki_mcp.py tools` tests the server without any agent. For native tools, also check that the agent exposes them, and consult your client's current MCP documentation and the [addon documentation](https://github.com/ankimcp/anki-mcp-server-addon) for transport configuration; a bridge is only needed when the client requires one. Skill installation alone does not establish the connection.
 
 ### Managing a Collection
 
-With the same MCP connection, the skill searches, edits, tags, moves, suspends and deletes notes and cards, creates decks, runs review sessions, and syncs with AnkiWeb when asked. It previews destructive changes before making them. See [the management guide](anki/MANAGE.md).
+Through the same connection, the skill searches, edits, tags, moves, suspends and deletes notes and cards, creates decks, runs review sessions, and syncs with AnkiWeb when asked. It previews destructive changes before making them. See [the management guide](anki/MANAGE.md).
 
 ### TSV Export
 
