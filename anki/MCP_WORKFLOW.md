@@ -1,6 +1,6 @@
 # Anki MCP Direct Push Workflow
 
-Continue after the shared workflow in `SKILL.md`. This guide targets the Anki MCP Server addon (`124672614`, normally `http://127.0.0.1:3141/`). Anki must be running. Use the connected tool descriptions as the authority for names, arguments, and response shapes; examples below use the current snake_case API, not AnkiConnect's camelCase API.
+Continue after the shared workflow in `SKILL.md`. This guide targets the Anki MCP Server addon (`124672614`, normally `http://127.0.0.1:3141/`). Anki must be running. Call the tools natively or through the bundled client (`SKILL.md`, Dependencies), and use their descriptions as the authority for names, arguments, and response shapes; examples below use the current snake_case API, not AnkiConnect's camelCase API.
 
 ## Inspect Before Writing
 
@@ -44,12 +44,12 @@ Add with `add_notes` for a batch (one deck and one note type per call; each entr
 
 Send only fields that exist in the chosen model. Inspect each result for success/errors and record returned note IDs; batch operations may partially succeed. Keep duplicate prevention enabled, and check additions within the current batch as well as against the initial inventory.
 
-A timeout after sending is an **uncertain write**, not proof of failure. Before retrying, query the target deck again and inspect candidates' full fields. If the intended card exists, recover its note ID and verify it. Retry only after a successful reconciliation shows it absent. If the connection prevents reconciliation, stop further writes, preserve the uncertain operation, and report it; do not blindly resend or suggest importing the same batch.
+A timeout after sending (exit code 3 from the bundled client) is an **uncertain write**, not proof of failure. Before retrying, query the target deck again and inspect candidates' full fields. If the intended card exists, recover its note ID and verify it. Retry only after a successful reconciliation shows it absent. If the connection prevents reconciliation, stop further writes, preserve the uncertain operation, and report it; do not blindly resend or suggest importing the same batch.
 
 Read back created/updated notes with `notes_info` and compare the requested fields and media references. Separate verified note counts from card counts, since some models generate multiple cards per note. Report actual verified additions, duplicate skips, updates, confirmed failures, and unresolved writes. A deck's total count alone does not verify the batch.
 
 ## Existing Connection and Iteration
 
-Use the established integration rather than installing or reconfiguring another server. If tools are missing or calls fail, report that observed condition and provide a TSV/media alternative when direct creation cannot be completed. Sync is separate: when the user uses AnkiWeb across devices, offer sync at the start/end; call it only when authorized, never implicitly.
+Use native tools when the server is already connected, and the bundled client otherwise; don't install or reconfigure another server. If neither reaches Anki or calls fail, report that observed condition (the client's message and exit code tell an unreachable server from a failed call) and provide a TSV/media alternative when direct creation cannot be completed. Sync is separate: when the user uses AnkiWeb across devices, offer sync at the start/end; call it only when authorized, never implicitly.
 
 For requested additions, repeat inspection and duplicate planning. For corrections, update the identified note rather than adding a replacement. For removals, identify the intended notes and follow the user's deletion authorization. Open the target deck in Anki only when useful or requested, using the available GUI tools.
