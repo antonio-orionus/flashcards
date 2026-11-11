@@ -22,7 +22,7 @@ Back Extra: verb; drift from / away from; noun: goal drift (uncountable)<br>Comp
 
 ## Corrections
 
-When you correct the user's own writing, offer a `Basic` card for each mistake worth keeping: `Fix it: <i>“<their sentence>”</i>` → the corrected sentence with the fix in bold, then one line naming the rule. Add context the front needs to be answerable (`Fix it (two books attached): …`). These cards target mistakes the user actually makes, so they are worth more than any list.
+When you correct the user's own writing, offer a `Basic` card for each mistake worth keeping: `Fix it: <i>“<their sentence>”</i>` → the corrected sentence with the fix in bold, then one line naming the rule. Add context the front needs to be answerable (`Fix it (two books attached): …`). These cards target mistakes the user actually makes, so they are worth more than any list. End the back with the speech tag from Word Notes, speaking the corrected sentence.
 
 ## Writing Cards with the User
 
