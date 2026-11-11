@@ -93,6 +93,8 @@ For non-STEM material, skip the three layers and keep the atomicity rules from `
 | `Basic (and reversed card)` | `Front`, `Back` | Vocabulary both ways |
 | `Cloze` | `Text` with `{{c1::deletion}}`, optional `Back Extra` | Fill-in-the-blank, sequences, lists |
 
+For words, jargon, idioms or grammar in a language the user is learning, including corrections of their own writing, read [references/LANGUAGE_VOCAB.md](references/LANGUAGE_VOCAB.md): it replaces the reversed vocabulary card with cloze sentences and sets the note format.
+
 Field names vary between collections and languages, so confirm them with `model_field_names` before writing. Tag by topic, not by layer. A request for N cards means N notes; say so when a reversed type turns them into 2N cards.
 
 Then continue with the chosen output mode. The MCP workflow's inspection, duplicate and verification steps apply unchanged. For a TSV export, drop the Layer and Topic columns and the layer tags: `#columns:Front	Back	Tags` mapped to Basic, or `Text	Back Extra	Tags` mapped to Cloze. Artifact mode is for STEM cards only, since its template requires a layer per card.

@@ -35,3 +35,9 @@ Check that vocabulary skips the L1–L3 layers and uses an inspected Basic or re
 The agent has no Anki MCP tools, Anki is open, and the user asks to add three vocabulary cards to an existing deck.
 
 Check that the agent uses the bundled client instead of declaring Anki unavailable: it runs `tools` once, reads `schema` for each tool before its first call, inspects the deck and duplicates as in the MCP workflow, and passes the notes to `call add_notes` from a temporary JSON file rather than inline. Exit code 2 is reported as Anki or the addon not running, with a TSV offer; exit code 3 after `add_notes` is handled as an uncertain write. The agent registers no MCP server and edits no agent configuration.
+
+## Learner Vocabulary
+
+A non-native English speaker asks for cards on `flaky`, `footgun` and `scope creep` in their existing `English::Programming` deck, which holds `Basic (and reversed card)` notes tagged `english programming-vocab`.
+
+Check that the agent reads `references/LANGUAGE_VOCAB.md` and writes `Cloze` notes, two per term with the second tagged `ctx2`, rather than reversed notes. Each blank has a definition hint of at most 8 words; `footgun` carries its article inside the blank (`a footgun`), `scope creep` has no article and an open slot before it, and no `an` precedes a blank. `Back Extra` gives countability, word partners and a contrast that names the similar term but not the answer. Nothing is translated into the user's native language. The existing deck and tags are kept, and the `ctx2` cards are moved to the end of the new queue.
